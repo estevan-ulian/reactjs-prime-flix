@@ -3,8 +3,8 @@ import api from "../../services/api";
 import { Link } from 'react-router-dom'
 
 export default function Home() {
-    const [filmes, setFilmes] = useState();
-
+    const [filmes, setFilmes] = useState()
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
         async function loadFilmes() {
             const res = await api.get('movie/now_playing', {
@@ -16,12 +16,23 @@ export default function Home() {
             })
 
             const results = res.data.results.slice(0,10)
-            console.log(results)
             setFilmes(results)
+            setLoading(false)
         }
-
         loadFilmes()
     }, [])
+
+    if(loading) {
+        return (
+            <>
+                <h2
+                className="flex justify-center items-center mt-5 text-2xl"
+                >
+                    Carregando filmes...
+                </h2>
+            </>
+        )
+    }
 
     function renderFilmes() {
         return (
