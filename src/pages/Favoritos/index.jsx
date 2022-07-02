@@ -25,7 +25,9 @@ export default function Favoritos() {
         <div className={`mt-6 flex flex-col items-center`}>
             <h1 className={`mb-6 text-3xl`}>Meus Filmes</h1>
             {filmes.length === 0 && <span>{`Nenhum filme salvo na sua lista! :(`}</span>}
-            <ul className={`max-w-3xl`}>
+            <ul className={`
+            w-full px-3 md:max-w-5xl text-sm md:text-base
+            `}>
                 {filmes.map((item) => {
                     return (
                         <li key={item.id}
@@ -36,7 +38,7 @@ export default function Favoritos() {
 
                                 <Link to={`/filme/${item.id}`}
                                 className={`text-blue-500 ml-4 mr-2`}
-                                >Ver detalhes</Link>
+                                >Detalhes</Link>
 
                                 <button onClick={() => excluirFilme(item.id)}>Excluir</button>
                             </div>
