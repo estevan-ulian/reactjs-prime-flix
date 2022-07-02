@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import api from '../../services/api'
+import { toast } from 'react-toastify'
 
 export default function Filme() {
-    const { id } = useParams();
-    const [filme, setFilme] = useState({});
-    const [loading, setLoading] = useState(true);
+    const { id } = useParams()
+    const navigate = useNavigate()
+    const [filme, setFilme] = useState({})
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         async function loadFilm() {
@@ -20,7 +22,8 @@ export default function Filme() {
                 setLoading(false)
             })
             .catch(() => {
-                console.log('filme nao encontrado')
+                navigate('/', { replace: true})
+                return
             })
         }
 
@@ -30,7 +33,23 @@ export default function Filme() {
             console.log('componente desmontado')
         }
 
-    }, [])
+    }, [id, navigate])
+
+    function salvarFilme() {
+        const minhaLista = localStorage.getItem('@primeFlix')
+        let filmesSalvos = JSON.parse(minhaLista) || [];
+
+        const hasFilme = filmesSalvos.some((filmesSalvos) => filmesSalvos.id === filme.id)
+
+        if (hasFilme) {
+            toast.warn('Este filme já está na sua lista!', {position: toast.POSITION.TOP_CENTER})
+        } else {
+            filmesSalvos.push(filme)
+            localStorage.setItem('@primeFlix', JSON.stringify(filmesSalvos));
+            toast.success('Filme salvo com sucesso!')
+        }
+
+    }
 
     if(loading) {
         return (
@@ -67,7 +86,9 @@ export default function Filme() {
 
             </div>
             <div className={`flex px-2`}>
-                <button className={`
+                <button 
+                onClick={salvarFilme}
+                className={`
                 mr-4 text-lg cursor-pointer rounded-md bg-blue-500  py-2 px-4
                 transition-all duration-500 ease-in-out text-white
                 border-2 border-blue-500 hover:border-blue-500 hover:text-blue-500 hover:bg-white
@@ -78,7 +99,11 @@ export default function Filme() {
                 text-lg cursor-pointer rounded-md border-2 border-blue-500 text-blue-500 py-2 px-4
                 transition-all duration-500 ease-in-out hover:bg-blue-500 hover:text-white
                 `}>
-                    <a href="#" className={`w-full h-full`}>Trailer</a>
+                    <a
+                    rel="external"
+                    target='blank'
+                    href={`https://youtube.com/results?search_query=${filme.title} Trailer`} 
+                    className={`w-full h-full`}>Trailer</a>
                 </button>
 
             </div>
